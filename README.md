@@ -7,7 +7,7 @@ Docker化したVue、Express、Postgresの例
 `docker-compose up --build`  
 
 ## Test
-http://localhost:3000 //express api server
+http://localhost:3000 //express api server  
 http://localhost:8080 //vue app
 
 ```
