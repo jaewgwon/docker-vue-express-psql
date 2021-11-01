@@ -1,0 +1,46 @@
+version: "3.8"
+services:
+  db:
+    build:
+      context: .
+      dockerfile: ./db/Dockerfile
+    restart: always
+    volumes:
+      - ./db/data:/var/lib/postgresql/data
+      #volumeはdocker volume [options]を通じて構築し、
+      #postgres-vol:/var/lib/postgresql/dataなどで管理する方が良い
+    ports:
+      - 5432:5432
+    environment:
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      TZ: "Asia/Tokyo"
+  api:
+    build:
+      context: .
+      dockerfile: ./api/Dockerfile
+    working_dir: /server
+    environment:
+      - DB_USER:${DB_USER}
+      - DB_PW:${DB_PASSWORD}
+      - DB_TYPE:${DB_TYPE}
+      - DB_HOST:${DB_PASSWORD}
+    volumes:
+      - ./api/src:/server/src
+    ports:
+      - 3000:3000
+  app:
+    build:
+      context: .
+      dockerfile: ./app/Dockerfile
+    working_dir: /app
+    # from
+    stdin_open: true
+    tty: true
+    environment:
+      - CHOKIDAR_USEPOLLING=true
+    # to: VueのHMRを実行するための設定
+    # https://daten-und-bass.io/blog/enabling-hot-reloading-with-vuejs-and-vue-cli-in-docker/
+    volumes:
+      - ./app/src:/app/src
+    ports:
+      - 8080:8080
